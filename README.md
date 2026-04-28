@@ -53,7 +53,8 @@ If you need the models, email gabrielaltoe2017@gmail.com.
 
 ### Runtime prerequisites
 
-- **AMQP broker**: update `source/protobuf/config.json` with the broker address.
+- **AMQP broker** (`main.py`): update `source/protobuf/config.json` with the broker address.
+- **AMQP broker** (`main_lite.py`): set `"address"` in `config_lite.json`.
 - **Camera topics**: live mode expects `CameraGateway.<cam_id>.Frame`.
 - **Skeleton topic (optional)**: `--plot_skeleton` expects `SkeletonsGrouper.0.Localization` to be available.
 - **Calibration**: camera calibration files live in `config_camera/` (e.g. `0.json`, `1.json`, ...).
@@ -61,7 +62,7 @@ If you need the models, email gabrielaltoe2017@gmail.com.
 ## Usage
 
 ```bash
-python source/main.py \
+python3 -m source.app.main \
   --realtime \
   --cam_numbers 0 1 2 3 \
   --plot_skeleton \
@@ -71,7 +72,7 @@ python source/main.py \
 Offline (from recorded videos):
 
 ```bash
-python source/main.py \
+python3 -m source.app.main \
   --video_path experiment_sas/experiments1/videos \
   --cam_numbers 0 1 2 3 \
   --yolo_model models/yolo11x.pt
@@ -92,7 +93,7 @@ python source/main.py \
 
 ## Gesture Detection
 
-The pointing gesture classifier (`source/classifier.py`) uses a two-stage pipeline and requires `models/logisticRegression.sav` to run:
+The pointing gesture classifier (`source/ml/classifier.py`) uses a two-stage pipeline and requires `models/logisticRegression.sav` to run:
 
 1. **ML gate** — a Logistic Regression model (`models/logisticRegression.sav`) trained on normalized 3D skeleton data classifies whether a pointing gesture is occurring.
 2. **Arm selection** — a geometric heuristic on the normalized skeleton determines which arm (left=1, right=2, both=3) is pointing, using:
