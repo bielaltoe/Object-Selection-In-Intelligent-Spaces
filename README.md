@@ -114,3 +114,75 @@ The pointing gesture classifier (`source/classifier.py`) uses a two-stage pipeli
 - Use `--headless` on machines without a display server.
 - If no frames are received in real-time mode, verify the broker address and camera topics.
 - If `--plot_skeleton` shows no gesture lines, confirm `SkeletonsGrouper.0.Localization` is publishing.
+
+---
+
+## Lite Mode (`main_lite.py`)
+
+A lightweight, **headless** version of the pipeline designed to run as a background service in the Intelligent Space.
+It removes all visualization (matplotlib, video mosaic, 3D plot, correspondence graph) and replaces the `argparse` CLI with a single JSON config file.
+
+### When to use
+
+| | `main.py` | `main_lite.py` |
+|---|---|---|
+| Visualization | ✅ | ❌ |
+| Offline video files | ✅ | ❌ |
+| Live IS cameras | ✅ | ✅ |
+| JSON config | ❌ | ✅ |
+| Low resource footprint | ❌ | ✅ |
+
+### Running
+
+```bash
+python3 -m source.app.main_lite config_lite.json
+```
+
+### Data flow
+
+**Consumes (Subscribe):**
+
+| Topic | Type | Condition |
+|-------|------|-----------|
+| `CameraGateway.{N}.Frame` | `is_msgs.image_pb2.Image` | Always (one per camera) |
+| `SkeletonsGrouper.0.Localization` | `is_msgs.image_pb2.ObjectAnnotations` | Only if `plot_skeleton: true` |
+
+**Publishes:**
+
+| Topic | Type | Condition | Content |
+|-------|------|-----------|---------|
+| `is.tracker.detections` *(configurable)* | `Detections` (custom proto) | `publish_detections: true` | 3D positions + bounding boxes per tracked object |
+| `MOTPointing.0.Detection` *(configurable)* | `Struct` (JSON-like) | `publish_pointing: true` + skeleton active | `{ "right_pointing": "ladder", "left_pointing": "None" }` |
+
+### Configuration (`config_lite.json`)
+
+```jsonc
+{
+  "address": "10.20.5.2:30000",     // AMQP broker address
+  "cam_numbers": [0, 1, 2, 3],      // Camera IDs to subscribe to
+
+  "yolo_model": "models/yolo11x.pt", // Path to YOLO weights
+  "confidence": 0.6,                 // YOLO detection threshold
+  "class_list": [0],                 // YOLO class IDs to track (0 = person)
+
+  "distance_threshold": 0.4,         // Max distance for cross-view matching
+  "drift_threshold": 0.4,            // Drift threshold for matching
+  "reference_point": "bottom_center",// Triangulation reference point on bbox
+                                     // Options: bottom_center | center | top_center | feet
+
+  "max_age": 10,                     // SORT: max frames object can be missing
+  "min_hits": 3,                     // SORT: min hits to start tracking
+  "dist_threshold": 1.0,             // SORT: max 3D distance for association (meters)
+  "use_3d_tracker": true,            // Enable SORT 3D tracker
+
+  "publish_detections": false,       // Publish 3D detections to AMQP
+  "publish_topic": "is.tracker.detections",
+  "publish_pointing": true,          // Publish pointing result to AMQP
+  "pointing_topic": "MOTPointing.0.Detection",
+
+  "plot_skeleton": true,             // Subscribe to skeleton topic and run gesture classifier
+
+  "save_coordinates": false,         // Save 3D coordinates to JSON file
+  "output_file": "output.json"
+}
+```

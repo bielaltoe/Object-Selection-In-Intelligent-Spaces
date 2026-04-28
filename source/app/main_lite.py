@@ -15,7 +15,6 @@ O arquivo JSON deve conter os campos definidos em config_lite.json.
 
 import json
 import logging
-import math
 import os
 import socket
 import sys
@@ -28,13 +27,11 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-from google.protobuf.json_format import Parse
-from google.protobuf.message import Message as PbMessage
 from google.protobuf.struct_pb2 import Struct
 
 from is_msgs.image_pb2 import HumanKeypoints as HKP
 from is_msgs.image_pb2 import Image, ObjectAnnotations
-from is_wire.core import Channel, Message, Subscription
+from is_wire.core import Message, Subscription
 
 from source.config.config import CLASS_NAMES
 from source.core.matcher import Matcher
@@ -44,7 +41,6 @@ from source.core.triangulation import triangulate_ransac
 from source.io.io_utils import save_3d_coordinates_with_ids
 from source.io.live_video_loader import (
     StreamChannel,
-    load_json,
     publish_with_3d_bbox,
     to_np,
 )
