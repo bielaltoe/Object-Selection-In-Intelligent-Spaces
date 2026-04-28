@@ -1,0 +1,37 @@
+syntax = "proto3";
+package teste;
+
+message Points{
+    repeated float position = 1;
+    int32 id = 2;
+    int32 name = 3;
+}
+
+// 3D Bounding Box with 8 corners or center + dimensions
+message BoundingBox3D {
+    // Option 1: Center + dimensions
+    repeated float center = 1;      // [x, y, z]
+    float width = 2;                // along X axis
+    float depth = 3;                // along Y axis  
+    float height = 4;               // along Z axis
+    
+    // Option 2: All 8 corners (for non-axis-aligned boxes)
+    repeated float corners = 5;     // [x1,y1,z1, x2,y2,z2, ... x8,y8,z8] - 24 floats
+    
+    // Optional: 4 bottom corners only (footprint)
+    repeated float footprint = 6;   // [x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4] - 12 floats
+}
+
+message Detection3D {
+    int32 id = 1;
+    int32 class_id = 2;
+    repeated float position = 3;    // Center position [x, y, z]
+    BoundingBox3D bbox_3d = 4;      // 3D bounding box
+}
+
+message Detections{
+    string timestamp = 1;
+    int32 frame = 2;
+    repeated Points points = 3;
+    repeated Detection3D detections_3d = 4;  // New field for 3D detections with bboxes
+}
