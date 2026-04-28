@@ -1,0 +1,27 @@
+{
+  "address": "10.20.5.2:30000",
+  "cam_numbers": [0, 1, 2, 3],
+
+  "yolo_model": "models/ladder_box_desk.pt",
+  "confidence": 0.6,
+  "class_list": [0],
+
+  "distance_threshold": 0.4,
+  "drift_threshold": 0.4,
+  "reference_point": "bottom_center",
+
+  "max_age": 10,
+  "min_hits": 3,
+  "dist_threshold": 1.0,
+  "use_3d_tracker": true,
+
+  "publish_detections": false,
+  "publish_topic": "is.tracker.detections",
+  "publish_pointing": true,
+  "pointing_topic": "MOTPointing.0.Detection",
+
+  "plot_skeleton": true,
+
+  "save_coordinates": false,
+  "output_file": "output.json"
+}
