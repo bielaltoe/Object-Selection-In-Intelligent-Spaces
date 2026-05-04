@@ -2,6 +2,16 @@
 
 Real-time multi-camera system for 3D object tracking and pointing-gesture-based object selection, designed for Human-Robot Interaction (HRI) in Intelligent Space environments.
 
+<div align="center">
+  <img src="examples/experiment.gif" alt="Object Selection Demo" width="800">
+  <br>
+  
+  <h3>🎬 Video Demonstration</h3>
+  <a href="https://youtu.be/B68Vobc3ZI8">
+    <img src="https://img.shields.io/badge/▶️ Watch Demo-YouTube-red?style=for-the-badge&logo=youtube" alt="YouTube Demo">
+  </a>
+  <p><em>Click above to watch the full system demonstration on YouTube</em></p>
+</div>
 
 ## Overview
 
@@ -108,9 +118,3 @@ The pointing gesture classifier (`source/ml/classifier.py`) uses a two-stage pip
 - **Video output**: `--save-video --output-video output.mp4`
 - **Exported figures**: `--export_figures --figures_output_dir exported_figures`
 - **AMQP publish**: `--publish --publish_topic is.tracker.detections`
-
-## Troubleshooting
-
-- Use `--headless` on machines without a display server.
-- If no frames are received in real-time mode, verify the broker address and camera topics.
-- If `--plot_skeleton` shows no gesture lines, confirm `SkeletonsGrouper.0.Localization` is publishing.
